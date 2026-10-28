@@ -22,23 +22,13 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Get a SonarQube Cloud token
-        id: sonar-token
-        shell: bash
-        run: |
-          OIDC_TOKEN=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://dev.sonarcloud.io" | jq -er '.value')
-          echo "::add-mask::$OIDC_TOKEN"
-          SONAR_TOKEN=$(curl -fsS -X POST https://api.sc-dev13.io/authentication/token \
-            --data-urlencode "grant_type=urn:ietf:params:oauth:grant-type:token-exchange" \
-            --data-urlencode "subject_token=$OIDC_TOKEN" \
-            --data-urlencode "subject_token_type=urn:ietf:params:oauth:token-type:id_token" \
-            --data-urlencode "audience=https://dev.sonarcloud.io" | jq -er '.access_token')
-          echo "::add-mask::$SONAR_TOKEN"
-          echo "sonar-token=$SONAR_TOKEN" >> "$GITHUB_OUTPUT"
+      - uses: SonarSource/sonarqube-auth-action@v1
+        id: auth
+        with:
+          sonar-api-base-url: https://api.sc-dev13.io
+          oidc-audience: https://dev.sonarcloud.io
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
-        env:
-          SONAR_TOKEN: ${{ steps.sonar-token.outputs.sonar-token }}
         with:
           args: >
             -Dsonar.scanner.sonarcloudUrl=https://dev13.sc-dev13.io
