@@ -28,7 +28,7 @@ jobs:
         run: |
           OIDC_TOKEN=$(curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://dev.sonarcloud.io" | jq -er '.value')
           echo "::add-mask::$OIDC_TOKEN"
-          SONAR_TOKEN=$(curl -fsS -X POST https://api.sc-dev12.io/authentication/token \
+          SONAR_TOKEN=$(curl -fsS -X POST https://api.sc-dev13.io/authentication/token \
             --data-urlencode "grant_type=urn:ietf:params:oauth:grant-type:token-exchange" \
             --data-urlencode "subject_token=$OIDC_TOKEN" \
             --data-urlencode "subject_token_type=urn:ietf:params:oauth:token-type:id_token" \
@@ -41,5 +41,5 @@ jobs:
           SONAR_TOKEN: ${{ steps.sonar-token.outputs.sonar-token }}
         with:
           args: >
-            -Dsonar.scanner.sonarcloudUrl=https://dev12.sc-dev12.io
-            -Dsonar.scanner.apiBaseUrl=https://api.sc-dev12.io
+            -Dsonar.scanner.sonarcloudUrl=https://dev13.sc-dev13.io
+            -Dsonar.scanner.apiBaseUrl=https://api.sc-dev13.io
