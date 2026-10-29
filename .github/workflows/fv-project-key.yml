@@ -1,0 +1,66 @@
+# Functional validation of sonarqube-auth-action project-key (SC-60477), against dev13.
+# Runs the auth step only, no scan. Each case is allowed to fail, then asserted at the end.
+name: FV project-key (dev13)
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  fv:
+    runs-on: ubuntu-latest
+    steps:
+      - name: no-key
+        id: no-key
+        continue-on-error: true
+        uses: SonarSource/sonarqube-auth-action@5ab3427506de9e197731cb0c122618788fccd519
+        with:
+          sonar-api-base-url: https://api.sc-dev13.io
+          oidc-audience: https://dev.sonarcloud.io
+          export-env: false
+      - name: unknown-key
+        id: unknown-key
+        continue-on-error: true
+        uses: SonarSource/sonarqube-auth-action@5ab3427506de9e197731cb0c122618788fccd519
+        with:
+          sonar-api-base-url: https://api.sc-dev13.io
+          oidc-audience: https://dev.sonarcloud.io
+          project-key: does-not-exist-xyz
+          export-env: false
+      - name: unbound-key
+        id: unbound-key
+        continue-on-error: true
+        uses: SonarSource/sonarqube-auth-action@5ab3427506de9e197731cb0c122618788fccd519
+        with:
+          sonar-api-base-url: https://api.sc-dev13.io
+          oidc-audience: https://dev.sonarcloud.io
+          project-key: wiiiiiif_manual
+          export-env: false
+      - name: bound-key
+        id: bound-key
+        continue-on-error: true
+        uses: SonarSource/sonarqube-auth-action@5ab3427506de9e197731cb0c122618788fccd519
+        with:
+          sonar-api-base-url: https://api.sc-dev13.io
+          oidc-audience: https://dev.sonarcloud.io
+          project-key: wiiiiiif_project-aura-plus-999
+          export-env: false
+      - name: Assert
+        env:
+          NO_KEY: ${{ steps.no-key.outcome }}
+          NO_KEY_PROJECT: ${{ steps.no-key.outputs.project-key }}
+          UNKNOWN: ${{ steps.unknown-key.outcome }}
+          UNBOUND: ${{ steps.unbound-key.outcome }}
+          UNBOUND_PROJECT: ${{ steps.unbound-key.outputs.project-key }}
+          BOUND: ${{ steps.bound-key.outcome }}
+          BOUND_PROJECT: ${{ steps.bound-key.outputs.project-key }}
+        run: |
+          echo "no-key       : $NO_KEY (project='$NO_KEY_PROJECT')  [informational]"
+          echo "unknown-key  : $UNKNOWN  [expected: failure]"
+          echo "unbound-key  : $UNBOUND (project='$UNBOUND_PROJECT')  [expected: failure]"
+          echo "bound-key    : $BOUND (project='$BOUND_PROJECT')  [expected: success, wiiiiiif_project-aura-plus-999]"
+          rc=0
+          [ "$UNKNOWN" = failure ] || rc=1
+          [ "$UNBOUND" = failure ] || rc=1
+          [ "$BOUND" = success ] && [ "$BOUND_PROJECT" = wiiiiiif_project-aura-plus-999 ] || rc=1
+          exit $rc
