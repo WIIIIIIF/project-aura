@@ -22,7 +22,7 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - uses: SonarSource/sonarqube-auth-action@5ab3427506de9e197731cb0c122618788fccd519 # SC-60477 PR head
+      - uses: SonarSource/sonarqube-auth-action@17bddb5a62e07aa8c6d0e0b0c18466fb253a0a66 # SC-60477 PR head
         id: auth-frontend
         with:
           sonar-api-base-url: https://api.sc-dev13.io

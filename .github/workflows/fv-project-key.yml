@@ -13,7 +13,7 @@ jobs:
       - name: no-key
         id: no-key
         continue-on-error: true
-        uses: SonarSource/sonarqube-auth-action@5ab3427506de9e197731cb0c122618788fccd519
+        uses: SonarSource/sonarqube-auth-action@17bddb5a62e07aa8c6d0e0b0c18466fb253a0a66
         with:
           sonar-api-base-url: https://api.sc-dev13.io
           oidc-audience: https://dev.sonarcloud.io
@@ -21,7 +21,7 @@ jobs:
       - name: unknown-key
         id: unknown-key
         continue-on-error: true
-        uses: SonarSource/sonarqube-auth-action@5ab3427506de9e197731cb0c122618788fccd519
+        uses: SonarSource/sonarqube-auth-action@17bddb5a62e07aa8c6d0e0b0c18466fb253a0a66
         with:
           sonar-api-base-url: https://api.sc-dev13.io
           oidc-audience: https://dev.sonarcloud.io
@@ -30,7 +30,7 @@ jobs:
       - name: unbound-key
         id: unbound-key
         continue-on-error: true
-        uses: SonarSource/sonarqube-auth-action@5ab3427506de9e197731cb0c122618788fccd519
+        uses: SonarSource/sonarqube-auth-action@17bddb5a62e07aa8c6d0e0b0c18466fb253a0a66
         with:
           sonar-api-base-url: https://api.sc-dev13.io
           oidc-audience: https://dev.sonarcloud.io
@@ -39,7 +39,7 @@ jobs:
       - name: bound-key
         id: bound-key
         continue-on-error: true
-        uses: SonarSource/sonarqube-auth-action@5ab3427506de9e197731cb0c122618788fccd519
+        uses: SonarSource/sonarqube-auth-action@17bddb5a62e07aa8c6d0e0b0c18466fb253a0a66
         with:
           sonar-api-base-url: https://api.sc-dev13.io
           oidc-audience: https://dev.sonarcloud.io
