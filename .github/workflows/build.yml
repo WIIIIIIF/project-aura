@@ -8,7 +8,7 @@ on:
 jobs:
   sonarqube:
     name: SonarQube
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     permissions:
       contents: read
       id-token: write
@@ -25,11 +25,7 @@ jobs:
       - uses: SonarSource/sonarqube-auth-action@v1
         id: auth
         with:
-          sonar-api-base-url: https://api.sc-dev13.io
           oidc-audience: https://dev.sonarcloud.io
+          sonar-api-base-url: https://api.sc-dev13.io
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
-        with:
-          args: >
-            -Dsonar.scanner.sonarcloudUrl=https://dev13.sc-dev13.io
-            -Dsonar.scanner.apiBaseUrl=https://api.sc-dev13.io
+        uses: SonarSource/sonarqube-scan-action@4d1dc0c91ee400dcf8a6dddf2f705ac36542e304 # v8.4.0
