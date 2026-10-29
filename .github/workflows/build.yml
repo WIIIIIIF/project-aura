@@ -25,11 +25,14 @@ jobs:
       - uses: SonarSource/sonarqube-auth-action@5ab3427506de9e197731cb0c122618788fccd519 # SC-60477 PR head
         id: auth-frontend
         with:
-          sonar-region: us
+          sonar-api-base-url: https://api.sc-dev13.io
+          oidc-audience: https://dev.sonarcloud.io
           project-key: wiiiiiif_project-aura-plus-999
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@4d1dc0c91ee400dcf8a6dddf2f705ac36542e304 # v8.4.0
         with:
           args: >
+            -Dsonar.scanner.sonarcloudUrl=https://dev13.sc-dev13.io
+            -Dsonar.scanner.apiBaseUrl=https://api.sc-dev13.io
             -Dsonar.organization=${{ steps.auth-frontend.outputs.organization }}
             -Dsonar.projectKey=${{ steps.auth-frontend.outputs.project-key }}
