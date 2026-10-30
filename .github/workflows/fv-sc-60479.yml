@@ -1,0 +1,46 @@
+# Functional validation of the SC-60479 tutorial output (sonarcloud-webapp#8455) against dev13.
+# The auth step is the one the tutorial generates for this repository (bound to 2 projects), with
+# the action pinned to the head of sonarqube-auth-action#7 as v1 has no project-key input yet.
+name: FV tutorial monorepo (dev13)
+on:
+  push:
+    branches: [fv-sc-60479]
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  monorepo-tutorial-step:
+    name: Tutorial output for a monorepo project (project-key)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: SonarSource/sonarqube-auth-action@e07fd0064b8cf93d2e3f69579a755d1865a097b7
+        id: auth
+        with:
+          project-key: wiiiiiif_project-aura-plus-999
+          oidc-audience: https://dev.sonarcloud.io
+          sonar-api-base-url: https://api.sc-dev13.io
+          export-env: false
+      - name: Assert the token is scoped to the project of the tutorial
+        env:
+          PROJECT: ${{ steps.auth.outputs.project-key }}
+          ORGANIZATION: ${{ steps.auth.outputs.organization }}
+        run: |
+          echo "organization='$ORGANIZATION' project='$PROJECT'"
+          [ "$PROJECT" = wiiiiiif_project-aura-plus-999 ]
+  single-project-tutorial-step:
+    name: Tutorial output for a single-project repo (no project-key) on a monorepo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: SonarSource/sonarqube-auth-action@e07fd0064b8cf93d2e3f69579a755d1865a097b7
+        id: auth
+        continue-on-error: true
+        with:
+          oidc-audience: https://dev.sonarcloud.io
+          sonar-api-base-url: https://api.sc-dev13.io
+          export-env: false
+      - name: Assert the exchange is rejected without a key (expected for a monorepo)
+        env:
+          OUTCOME: ${{ steps.auth.outcome }}
+        run: |
+          echo "no project-key: $OUTCOME [expected: failure]"
+          [ "$OUTCOME" = failure ]
